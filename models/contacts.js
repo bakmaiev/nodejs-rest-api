@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import { nanoid } from "nanoid";
 import path from "path";
 
-const contactsPath = path.resolve("db", "contacts.json");
+const contactsPath = path.resolve("models", "contacts.json");
 
 const getListContacts = async () => {
   const contacts = await fs.readFile(contactsPath);
@@ -15,7 +15,7 @@ const getContactById = async (id) => {
   return foundContact || null;
 };
 
-const addContact = async (name, email, phone) => {
+const addContact = async ({ name, email, phone }) => {
   const contacts = await getListContacts();
   const newContact = {
     id: nanoid(),
@@ -40,7 +40,7 @@ const removeContact = async (id) => {
   }
 };
 
-export const updateContactById = async (id, name, email, phone) => {
+export const updateContactById = async (id, { name, email, phone }) => {
   const contacts = await getListContacts();
   const index = contacts.findIndex((contact) => contact.id === id);
   if (index === -1) {
