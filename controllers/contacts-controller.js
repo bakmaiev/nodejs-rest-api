@@ -2,21 +2,9 @@ import Joi from "joi";
 
 import contactsService from "../models/contacts.js";
 
-import { ctrlWrapper } from "../decorators/index.js";
-
-import { httpError } from "../helpers/index.js";
-
-const contactsAddScheme = Joi.object({
-  name: Joi.string()
-    .required()
-    .messages({ "any.required": `Missing required name field` }),
-  email: Joi.string()
-    .required()
-    .messages({ "any.required": `Missing required email field` }),
-  phone: Joi.string()
-    .required()
-    .messages({ "any.required": `Missing required phone field` }),
-});
+import httpError from "../helpers/httpError.js";
+import contactsAddScheme from "../schemes/contacts-schemes.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
 const getAllContacts = async (req, res) => {
   const result = await contactsService.getListContacts();
@@ -33,6 +21,10 @@ const getContactsById = async (req, res) => {
 };
 
 const addContact = async (req, res) => {
+  const { error } = contactsAddScheme.validate(req.body);
+  if (error) {
+    throw httpError(400, error.message);
+  }
   const result = await contactsService.addContact(req.body);
   res.status(201).json(result);
 };
