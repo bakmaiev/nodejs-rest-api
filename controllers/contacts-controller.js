@@ -33,22 +33,11 @@ const getContactsById = async (req, res) => {
 };
 
 const addContact = async (req, res) => {
-  const { error } = contactsAddScheme.validate(req.body);
-  if (error) {
-    throw httpError(400, error.message);
-  }
   const result = await contactsService.addContact(req.body);
   res.status(201).json(result);
 };
 
 const updateContactById = async (req, res) => {
-  const { value, error } = contactsAddScheme.validate(req.body);
-  if (JSON.stringify(value) === "{}") {
-    throw httpError(400, "Missing fields");
-  }
-  if (error) {
-    throw httpError(400, error.message);
-  }
   const { contactId } = req.params;
   const result = await contactsService.updateContactById(contactId, req.body);
   if (!result) {
