@@ -1,19 +1,15 @@
-import Joi from "joi";
-
-import contactsService from "../models/contacts.js";
-
-import httpError from "../helpers/httpError.js";
-import contactsAddScheme from "../schemes/contacts-schemes.js";
+import Contact from "../models/contact.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
+import httpError from "../helpers/httpError.js";
 
 const getAllContacts = async (req, res) => {
-  const result = await contactsService.getListContacts();
+  const result = await Contact.find();
   res.json(result);
 };
 
 const getContactsById = async (req, res) => {
   const { contactId } = req.params;
-  const result = await contactsService.getContactById(contactId);
+  const result = await Contact.findById(contactId);
   if (!result) {
     throw httpError(404);
   }
@@ -21,17 +17,26 @@ const getContactsById = async (req, res) => {
 };
 
 const addContact = async (req, res) => {
-  const { error } = contactsAddScheme.validate(req.body);
-  if (error) {
-    throw httpError(400, error.message);
-  }
-  const result = await contactsService.addContact(req.body);
+  const result = await Contact.create(req.body);
   res.status(201).json(result);
 };
 
 const updateContactById = async (req, res) => {
   const { contactId } = req.params;
-  const result = await contactsService.updateContactById(contactId, req.body);
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    new: true,
+  });
+  if (!result) {
+    throw httpError(404);
+  }
+  res.json(result);
+};
+
+const updateStatusContact = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    new: true,
+  });
   if (!result) {
     throw httpError(404);
   }
@@ -40,7 +45,7 @@ const updateContactById = async (req, res) => {
 
 const deleteContactById = async (req, res) => {
   const { contactId } = req.params;
-  const result = await contactsService.removeContact(contactId);
+  const result = await Contact.findByIdAndRemove(contactId);
   if (!result) {
     throw httpError(404);
   }
@@ -52,5 +57,6 @@ export default {
   getContactsById: ctrlWrapper(getContactsById),
   addContact: ctrlWrapper(addContact),
   updateContactById: ctrlWrapper(updateContactById),
+  updateFavorite: ctrlWrapper(updateStatusContact),
   deleteContactById: ctrlWrapper(deleteContactById),
 };
