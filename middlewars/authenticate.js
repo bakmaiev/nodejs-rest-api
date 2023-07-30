@@ -1,13 +1,14 @@
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import httpError from "../helpers/httpError.js";
 import User from "../models/user.js";
+import jwt from "jsonwebtoken";
 
 const { JWT_SECRET } = process.env;
 
-const autenticate = async (req, res, next) => {
+const authenticate = async (req, res, next) => {
   const { authorization = "" } = req.headers;
   const [bearer, token] = authorization.split(" ");
-  if (bearer !== "Bearer ") {
+  if (bearer !== "Bearer") {
     throw httpError(401);
   }
   try {
@@ -16,10 +17,11 @@ const autenticate = async (req, res, next) => {
     if (!user) {
       throw httpError(401);
     }
+    req.user = user;
     next();
   } catch (e) {
     throw httpError(401, e.message);
   }
 };
 
-export default ctrlWrapper(autenticate);
+export default ctrlWrapper(authenticate);
