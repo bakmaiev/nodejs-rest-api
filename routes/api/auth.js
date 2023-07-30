@@ -6,13 +6,19 @@ import authContoller from "../../controllers/auth-contoller.js";
 const authRouter = express.Router();
 
 authRouter.post(
-  "/signup",
+  "/register",
   validateBody(usersSchemes.userSignupSchema),
   authContoller.signup
 );
 
 authRouter.post(
-  "/signin",
+  "/login",
+  validateBody(usersSchemes.userSigninSchema),
+  authContoller.signin
+);
+
+authRouter.post(
+  "/logout",
   validateBody(usersSchemes.userSigninSchema),
   authContoller.signin
 );
