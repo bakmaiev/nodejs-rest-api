@@ -15,19 +15,21 @@ const signup = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({ ...req.body, password: hashPassword });
-  res.status(201).json({ email: newUser.email });
+  res
+    .status(201)
+    .json({ email: newUser.email, subscription: newUser.subscription });
 };
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) {
-    throw httpError(401, "Email or password invalid");
+    throw httpError(401, "Email or password is wrong");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
-    throw httpError(401, "Email or password invalid");
+    throw httpError(401, "Email or password is wrong");
   }
 
   const payload = {
@@ -38,6 +40,8 @@ const signin = async (req, res) => {
   await User.findByIdAndUpdate(user._id, { token });
   res.json({ token });
 };
+
+const logout = async (req, res) => {};
 
 export default {
   signup: ctrlWrapper(signup),
