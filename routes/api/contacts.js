@@ -4,23 +4,34 @@ import isEmptyBody from "../../middlewars/isEmptyBody.js";
 import validateBody from "../../decorators/validateBody.js";
 import isValidId from "../../middlewars/isValidId.js";
 import contactsSchemes from "../../schemes/contacts-schemes.js";
+import autenticate from "../../middlewars/authenticate.js";
 
-const router = express.Router();
+const contactsRouter = express.Router();
 
-router.get("/", contactsController.getAllContacts);
+contactsRouter.use(autenticate);
 
-router.get("/:contactId", isValidId, contactsController.getContactsById);
+contactsRouter.get("/", contactsController.getAllContacts);
 
-router.post(
+contactsRouter.get(
+  "/:contactId",
+  isValidId,
+  contactsController.getContactsById
+);
+
+contactsRouter.post(
   "/",
   isEmptyBody,
   validateBody(contactsSchemes.contactsAddScheme),
   contactsController.addContact
 );
 
-router.delete("/:contactId", isValidId, contactsController.deleteContactById);
+contactsRouter.delete(
+  "/:contactId",
+  isValidId,
+  contactsController.deleteContactById
+);
 
-router.put(
+contactsRouter.put(
   "/:contactId",
   isValidId,
   isEmptyBody,
@@ -28,7 +39,7 @@ router.put(
   contactsController.updateContactById
 );
 
-router.patch(
+contactsRouter.patch(
   "/:contactId/favorite",
   isValidId,
   isEmptyBody,
@@ -36,4 +47,4 @@ router.patch(
   contactsController.updateFavorite
 );
 
-export default router;
+export default contactsRouter;
