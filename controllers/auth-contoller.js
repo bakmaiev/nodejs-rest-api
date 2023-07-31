@@ -41,9 +41,32 @@ const signin = async (req, res) => {
   res.json({ token });
 };
 
-const logout = async (req, res) => {};
+const getCurrent = async (req, res) => {
+  const { email, subscription } = req.user;
+  res.json({ email, subscription });
+};
+
+const signout = async (req, res) => {
+  const { _id } = req.user;
+  await User.findByIdAndUpdate(_id, { token: "" });
+
+  res.status(204).end();
+};
+
+const subUpdate = async (req, res) => {
+  const { _id, email } = req.user;
+  const { subscription } = req.body;
+  await User.findByIdAndUpdate(_id, { subscription });
+  res.json({
+    email,
+    subscription,
+  });
+};
 
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
+  getCurrent: ctrlWrapper(getCurrent),
+  signout: ctrlWrapper(signout),
+  subUpdate: ctrlWrapper(subUpdate),
 };
