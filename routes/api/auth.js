@@ -4,7 +4,6 @@ import usersSchemes from "../../schemes/users-schemes.js";
 import authContoller from "../../controllers/auth-contoller.js";
 import authenticate from "../../middlewars/authenticate.js";
 import upload from "../../middlewars/upload.js";
-import ctrlWrapper from "../../decorators/ctrlWrapper.js";
 
 const authRouter = express.Router();
 
@@ -14,6 +13,8 @@ authRouter.post(
   authContoller.signup
 );
 
+authRouter.get("/verify/:verificationToken", authContoller.verify);
+
 authRouter.post(
   "/login",
   validateBody(usersSchemes.userSigninSchema),
@@ -21,6 +22,12 @@ authRouter.post(
 );
 
 authRouter.get("/current", authenticate, authContoller.getCurrent);
+
+authRouter.post(
+  "/verify",
+  validateBody(usersSchemes.userEmailSchema),
+  authContoller.resendVerifyEmail
+);
 
 authRouter.post("/logout", authenticate, authContoller.signout);
 

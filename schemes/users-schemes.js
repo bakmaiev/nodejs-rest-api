@@ -15,8 +15,13 @@ const userSubUpdateSchema = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business"),
 });
 
+const userEmailSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 export default {
   userSigninSchema,
   userSignupSchema,
   userSubUpdateSchema,
+  userEmailSchema,
 };
